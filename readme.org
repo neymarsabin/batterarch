@@ -3,11 +3,10 @@
 #+AUTHOR: neymarsabin
 #+DATE: <2024-02-28 Wed>
 
-* BatterArch
 Check battery performance of your laptop if you are running Arch Linux. This binary at the moment does not consider any other OS except Arch.
 
 * How it works?
-The applications reads the file ~/sys/class/power_supply/BAT0/uevent~ and saves the data into a SQlite db table. The file contains details something like this:
+The applications reads the file ~/sys/class/power_supply/BAT0/uevent~ and saves the data into a SQlite db table. The file looks something like this:
 #+begin_src shell
 cat /sys/class/power_supply/BAT0/uevent
 
