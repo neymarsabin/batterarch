@@ -1,0 +1,31 @@
+#+TITLE: BatterArch
+#+OPTIONS: toc:nil
+#+AUTHOR: neymarsabin
+#+DATE: <2024-02-28 Wed>
+
+* BatterArch
+Check battery performance of your laptop if you are running Arch Linux. This binary at the moment does not consider any other OS except Arch.
+
+* How it works?
+The applications reads the file ~/sys/class/power_supply/BAT0/uevent~ and saves the data into a SQlite db table. The file contains details something like this:
+#+begin_src shell
+cat /sys/class/power_supply/BAT0/uevent
+
+# POWER_SUPPLY_NAME=BAT0
+# POWER_SUPPLY_TYPE=Battery
+# POWER_SUPPLY_STATUS=Discharging
+# POWER_SUPPLY_PRESENT=1
+# POWER_SUPPLY_TECHNOLOGY=Li-poly
+# POWER_SUPPLY_CYCLE_COUNT=14
+# POWER_SUPPLY_VOLTAGE_MIN_DESIGN=11520000
+# POWER_SUPPLY_VOLTAGE_NOW=11178000
+# POWER_SUPPLY_POWER_NOW=8014000
+# POWER_SUPPLY_ENERGY_FULL_DESIGN=57000000
+# POWER_SUPPLY_ENERGY_FULL=58030000
+# POWER_SUPPLY_ENERGY_NOW=17210000
+# POWER_SUPPLY_CAPACITY=29
+# POWER_SUPPLY_CAPACITY_LEVEL=Normal
+# POWER_SUPPLY_MODEL_NAME=LNV-5B11C73244
+# POWER_SUPPLY_MANUFACTURER=SMP
+# POWER_SUPPLY_SERIAL_NUMBER=772
+#+end_src
