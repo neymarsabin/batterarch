@@ -1,5 +1,9 @@
 package database
 
+import (
+	"gorm.io/gorm"
+)
+
 type BatteryDetails struct {
 	ID            uint   `gorm:"primaryKey"`
 	ModelName     string `gorm:"type:varchar(100)"`
@@ -12,4 +16,11 @@ type BatteryDetails struct {
 	BatteryLevel  string `gorm:"type:varchar(100)"`
 	RecordedAt    string `gorm:"type:varchar(100)"`
 	SupplyType    string `gorm:"type:varchar(100)"`
+}
+
+func GetAllRecords(db *gorm.DB) *[]BatteryDetails {
+	var records []BatteryDetails
+	db.Find(&records)
+
+	return &records
 }

@@ -1,26 +1,49 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
 	"time"
 
 	database "github.com/neymarsabin/batterarch/models"
+	server "github.com/neymarsabin/batterarch/tcp"
 	"gorm.io/gorm"
 )
 
 const sysFile = "/sys/class/power_supply/BAT0/uevent"
-const logPath = "/home/neymarsabin/.config/batterarch/access.log"
 
 type BatteryInfo map[string]interface{}
 
 func main() {
 	db := database.InitializeDb()
 	data := readSysFile()
-	batteryDetailsTemp := strings.Split(string(data), "\n")
-	batteryDetails := GetKeyValueDataFrom(batteryDetailsTemp)
-	batteryDetails.SaveToDatabase(db)
+
+	// take arugments from OS
+	args := os.Args[1:]
+
+	// save battery related details into Database
+	batteryInfo := GetKeyValueDataFrom(strings.Split(string(data), "\n"))
+	batteryInfo.SaveToDatabase(db)
+
+	if len(args) > 0 {
+		if args[0] == "server" || args[0] == "s" {
+			server.InitializeServer(db)
+		}
+
+		if args[0] == "cli" || args[0] == "c" {
+			records := database.GetAllRecords(db)
+			val, err := json.MarshalIndent(records, "", "  ")
+
+			if err != nil {
+				fmt.Println("Error while marshalling data: ", err)
+				os.Exit(1)
+			}
+
+			fmt.Println(string(val))
+		}
+	}
 }
 
 func readSysFile() []byte {
@@ -45,7 +68,7 @@ func GetKeyValueDataFrom(data []string) BatteryInfo {
 }
 
 func (b BatteryInfo) SaveToDatabase(db *gorm.DB) {
-	savedData := db.Create(&database.BatteryDetails{
+	db.Create(&database.BatteryDetails{
 		ModelName:     b["POWER_SUPPLY_MODEL_NAME"].(string),
 		VoltageNow:    b["POWER_SUPPLY_VOLTAGE_NOW"].(string),
 		CapacityLevel: b["POWER_SUPPLY_CAPACITY_LEVEL"].(string),
@@ -57,7 +80,6 @@ func (b BatteryInfo) SaveToDatabase(db *gorm.DB) {
 		RecordedAt:    b["recordedAt"].(time.Time).String(),
 		SupplyType:    b["POWER_SUPPLY_TYPE"].(string),
 	})
-	fmt.Println("Saved data: ", savedData)
 	var record database.BatteryDetails
 	db.First(&record, 1)
 }
