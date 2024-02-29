@@ -9,6 +9,7 @@ import (
 
 	database "github.com/neymarsabin/batterarch/models"
 	server "github.com/neymarsabin/batterarch/tcp"
+	"github.com/neymarsabin/batterarch/visual"
 	"gorm.io/gorm"
 )
 
@@ -32,7 +33,7 @@ func main() {
 			server.InitializeServer(db)
 		}
 
-		if args[0] == "cli" || args[0] == "c" {
+		if args[0] == "json" || args[0] == "j" {
 			records := database.GetAllRecords(db)
 			val, err := json.MarshalIndent(records, "", "  ")
 
@@ -42,6 +43,11 @@ func main() {
 			}
 
 			fmt.Println(string(val))
+		}
+
+		if args[0] == "graph" || args[0] == "g" {
+			records := database.GetAllRecords(db)
+			visual.GenerateGraph(*records)
 		}
 	}
 }
