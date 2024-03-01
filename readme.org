@@ -7,7 +7,7 @@ Check battery performance of your laptop if you are running Arch Linux. This bin
 
 * How it works?
 The applications reads the file ~/sys/class/power_supply/BAT0/uevent~ and saves the data into a SQlite db table. The file looks something like this:
-#+begin_src shell
+#+BEGIN_SRC shell
 cat /sys/class/power_supply/BAT0/uevent
 
 # POWER_SUPPLY_NAME=BAT0
@@ -27,7 +27,7 @@ cat /sys/class/power_supply/BAT0/uevent
 # POWER_SUPPLY_MODEL_NAME=LNV-5B11C73244
 # POWER_SUPPLY_MANUFACTURER=SMP
 # POWER_SUPPLY_SERIAL_NUMBER=772
-#+end_src
+#+END_SRC
 
 * Building BatterArch
 Make sure you have [[https://go.dev/dl/][golang]] installed because the application is written in Golang. To build run the following command:
@@ -39,14 +39,14 @@ This will create a binary called ~batterarch~ that we can run in the terminal.
 
 ** Usage
 Now that you have the binary ready, there are multiple ways you can run the app. The binary comes up the following options:
-#+begin_example
+#+BEGIN_EXAMPLE
 ./batterarch <options>
 
 options can be one of the following:
 g => graph => view usage graph in the terminal.
 j => json => view usage data as JSON in the stdout/terminal.
 s => server => start a TCP server in port 42069 that has routes
-#+end_example
+#+END_EXAMPLE
 
 ** Server Details
 When you spin up a ~batterarch~ server, the API responds to JSON in [[http://localhost:42069][http://localhost:42069/]]
@@ -59,6 +59,6 @@ curl -X GET http://localhost:42069/ | jq ".data[] | .BatteryLevel"
 BatterArch uses sqlite database as data storage. All the data that we get in the ~graph~, ~json~ or ~server~ mode are retrieved using SQL queries from the SQlite database. The location of the database is ~$HOME/.config/batterarch/batterarch.db~ The config folder and database is automatically created.
 If you want to write your own queries against the database, you can explore the ~batterarch.db~ file and write SQL queries.
 
-#+begin_quote
+#+BEGIN_QUOTE
 batterarch does not check battery details and save it to the database in timely manner. There is no scheduling in place. The feature is on the way. For now, when you run the command, a new row is inserted in the database table with the details.
-#+end_quote
+#+END_QUOTE
