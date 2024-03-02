@@ -13,7 +13,7 @@ type BatteryDetails struct {
 	EnergyNow     string `gorm:"type:varchar(100)"`
 	Status        string `gorm:"type:varchar(100)"`
 	CycleCount    string `gorm:"type:varchar(100)"`
-	BatteryLevel  string `gorm:"type:varchar(100)"`
+	BatteryLevel  int
 	RecordedAt    string `gorm:"type:varchar(100)"`
 	SupplyType    string `gorm:"type:varchar(100)"`
 }
@@ -23,4 +23,11 @@ func GetAllRecords(db *gorm.DB) *[]BatteryDetails {
 	db.Find(&records)
 
 	return &records
+}
+
+func GetLastBatteryFullCharge(db *gorm.DB) *BatteryDetails {
+	var record BatteryDetails
+	db.Order("battery_level desc").First(&record)
+
+	return &record
 }

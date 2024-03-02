@@ -9,7 +9,7 @@ build:
 
 server: build
 	echo "Running batterarch"
-	./batterarch
+	./batterarch server
 
 graph: build
 	echo "Generating graph"
@@ -18,6 +18,12 @@ graph: build
 json: build
 	echo "Generating json"
 	./batterarch json
+
+test: build
+	echo "Running tests"
+	./batterarch json
+	./batterarch graph
+	./batterarch server
 
 clean:
 	rm -f batterarch

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -47,6 +48,8 @@ func main() {
 
 		if args[0] == "graph" || args[0] == "g" {
 			records := database.GetAllRecords(db)
+			lastChargedTime := database.GetLastBatteryFullCharge(db)
+			fmt.Println("Last charged time: ", lastChargedTime.RecordedAt)
 			visual.GenerateGraph(*records)
 		}
 	}
@@ -70,6 +73,12 @@ func GetKeyValueDataFrom(data []string) BatteryInfo {
 		}
 	}
 	batteryInfo["recordedAt"] = time.Now()
+	newBatteryLevel, err := strconv.Atoi(batteryInfo["POWER_SUPPLY_CAPACITY"].(string))
+	if err != nil {
+		fmt.Println("Error while converting string to int: ", err)
+		os.Exit(1)
+	}
+	batteryInfo["POWER_SUPPLY_CAPACITY"] = newBatteryLevel
 	return batteryInfo
 }
 
@@ -82,7 +91,7 @@ func (b BatteryInfo) SaveToDatabase(db *gorm.DB) {
 		EnergyNow:     b["POWER_SUPPLY_ENERGY_NOW"].(string),
 		Status:        b["POWER_SUPPLY_STATUS"].(string),
 		CycleCount:    b["POWER_SUPPLY_CYCLE_COUNT"].(string),
-		BatteryLevel:  b["POWER_SUPPLY_CAPACITY"].(string),
+		BatteryLevel:  b["POWER_SUPPLY_CAPACITY"].(int),
 		RecordedAt:    b["recordedAt"].(time.Time).String(),
 		SupplyType:    b["POWER_SUPPLY_TYPE"].(string),
 	})
