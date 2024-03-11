@@ -48,8 +48,10 @@ func main() {
 
 		if args[0] == "graph" || args[0] == "g" {
 			records := database.GetAllRecords(db)
-			lastChargedTime := database.GetLastBatteryFullCharge(db)
-			fmt.Println("Last charged time: ", lastChargedTime.RecordedAt)
+			lastChargedBatteryDetails := database.GetLastBatteryFullCharge(db)
+			lastChargedTimeUnix := time.Unix(lastChargedBatteryDetails.RecordedAtUnix, 0)
+			fmt.Println("Last charged time Unix: ", lastChargedTimeUnix.Format(time.RFC3339))
+			fmt.Println("Last Charged Battery Level: ", lastChargedBatteryDetails.BatteryLevel)
 			visual.GenerateGraph(*records)
 		}
 	}
@@ -73,6 +75,7 @@ func GetKeyValueDataFrom(data []string) BatteryInfo {
 		}
 	}
 	batteryInfo["recordedAt"] = time.Now()
+	batteryInfo["recordedAtUnix"] = time.Now().Unix()
 	newBatteryLevel, err := strconv.Atoi(batteryInfo["POWER_SUPPLY_CAPACITY"].(string))
 	if err != nil {
 		fmt.Println("Error while converting string to int: ", err)
@@ -84,16 +87,17 @@ func GetKeyValueDataFrom(data []string) BatteryInfo {
 
 func (b BatteryInfo) SaveToDatabase(db *gorm.DB) {
 	db.Create(&database.BatteryDetails{
-		ModelName:     b["POWER_SUPPLY_MODEL_NAME"].(string),
-		VoltageNow:    b["POWER_SUPPLY_VOLTAGE_NOW"].(string),
-		CapacityLevel: b["POWER_SUPPLY_CAPACITY_LEVEL"].(string),
-		PowerNow:      b["POWER_SUPPLY_POWER_NOW"].(string),
-		EnergyNow:     b["POWER_SUPPLY_ENERGY_NOW"].(string),
-		Status:        b["POWER_SUPPLY_STATUS"].(string),
-		CycleCount:    b["POWER_SUPPLY_CYCLE_COUNT"].(string),
-		BatteryLevel:  b["POWER_SUPPLY_CAPACITY"].(int),
-		RecordedAt:    b["recordedAt"].(time.Time).String(),
-		SupplyType:    b["POWER_SUPPLY_TYPE"].(string),
+		ModelName:      b["POWER_SUPPLY_MODEL_NAME"].(string),
+		VoltageNow:     b["POWER_SUPPLY_VOLTAGE_NOW"].(string),
+		CapacityLevel:  b["POWER_SUPPLY_CAPACITY_LEVEL"].(string),
+		PowerNow:       b["POWER_SUPPLY_POWER_NOW"].(string),
+		EnergyNow:      b["POWER_SUPPLY_ENERGY_NOW"].(string),
+		Status:         b["POWER_SUPPLY_STATUS"].(string),
+		CycleCount:     b["POWER_SUPPLY_CYCLE_COUNT"].(string),
+		RecordedAt:     b["recordedAt"].(time.Time).String(),
+		BatteryLevel:   b["POWER_SUPPLY_CAPACITY"].(int),
+		SupplyType:     b["POWER_SUPPLY_TYPE"].(string),
+		RecordedAtUnix: b["recordedAtUnix"].(int64),
 	})
 	var record database.BatteryDetails
 	db.First(&record, 1)
