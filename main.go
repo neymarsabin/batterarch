@@ -48,11 +48,8 @@ func main() {
 
 		if args[0] == "graph" || args[0] == "g" {
 			records := database.GetAllRecords(db)
-			lastChargedBatteryDetails := database.GetLastBatteryFullCharge(db)
-			lastChargedTimeUnix := time.Unix(lastChargedBatteryDetails.RecordedAtUnix, 0)
-			fmt.Println("Last charged time Unix: ", lastChargedTimeUnix.Format(time.RFC3339))
-			fmt.Println("Last Charged Battery Level: ", lastChargedBatteryDetails.BatteryLevel)
-			visual.GenerateGraph(*records)
+			graphData := visual.BatteryLevelGraphXY(*records)
+			visual.HtmlGraph(graphData)
 		}
 	}
 }

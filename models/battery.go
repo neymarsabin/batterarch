@@ -21,14 +21,14 @@ type BatteryDetails struct {
 
 func GetAllRecords(db *gorm.DB) *[]BatteryDetails {
 	var records []BatteryDetails
-	db.Find(&records)
+	db.Where("recorded_at_unix is not null").Order("battery_level desc").Find(&records)
 
 	return &records
 }
 
 func GetLastBatteryFullCharge(db *gorm.DB) *BatteryDetails {
 	var record BatteryDetails
-	db.Where("recorded_at_unix is not null").Order("battery_level desc").First(&record)
+	db.Where("recorded_at_unix is not null").Where("status == 'Charging'").Order("battery_level desc").First(&record)
 
 	return &record
 }
