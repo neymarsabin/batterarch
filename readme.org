@@ -43,7 +43,7 @@ Now that you have the binary ready, there are multiple ways you can run the app.
 ./batterarch <options>
 
 options can be one of the following:
-g => graph => view usage graph in the terminal.
+g => graph => view usage graph in the browser.
 j => json => view usage data as JSON in the stdout/terminal.
 s => server => start a TCP server in port 42069 that has routes
 #+END_EXAMPLE
