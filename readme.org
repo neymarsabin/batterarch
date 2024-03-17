@@ -58,7 +58,3 @@ curl -X GET http://localhost:42069/ | jq ".data[] | .BatteryLevel"
 * Data Storage
 BatterArch uses sqlite database as data storage. All the data that we get in the ~graph~, ~json~ or ~server~ mode are retrieved using SQL queries from the SQlite database. The location of the database is ~$HOME/.config/batterarch/batterarch.db~ The config folder and database is automatically created.
 If you want to write your own queries against the database, you can explore the ~batterarch.db~ file and write SQL queries.
-
-#+BEGIN_QUOTE
-batterarch does not check battery details and save it to the database in timely manner. There is no scheduling in place. The feature is on the way. For now, when you run the command, a new row is inserted in the database table with the details.
-#+END_QUOTE
